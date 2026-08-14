@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"kranger/internal/model"
+	"github.com/Shauryan/kranger/internal/model"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
@@ -294,12 +294,41 @@ func (d *Discovery) Discover(ctx context.Context) (*model.ClusterState, error) {
 	}
 
 	for _, service := range services.Items {
+
+		// Health status: report ready/total Endpoint
+		// addresses, matching the "<ready>/<total> ready"
+		// format already used by Deployments/ReplicaSets,
+		// so isNodeReady() parses it without changes. A
+		// Service's Spec.Type ("ClusterIP", "NodePort", ...)
+		// is a routing detail, not a health signal, so it's
+		// intentionally not used here.
+		endpointStatus := "0/0 ready"
+
+		endpoints, epErr := d.Client.Clientset.CoreV1().
+			Endpoints(service.Namespace).
+			Get(ctx, service.Name, metav1.GetOptions{})
+
+		if epErr == nil {
+			ready := 0
+			total := 0
+
+			for _, subset := range endpoints.Subsets {
+				ready += len(subset.Addresses)
+				total += len(subset.Addresses) + len(subset.NotReadyAddresses)
+			}
+
+			endpointStatus = fmt.Sprintf("%d/%d ready", ready, total)
+		}
+		// If the Endpoints object can't be fetched (e.g. RBAC
+		// restriction), fall back to the zero-value status
+		// above rather than failing discovery entirely.
+
 		state.Services = append(state.Services, model.Resource{
 			ID:        resourceID(model.KindService, service.Namespace, service.Name),
 			Kind:      model.KindService,
 			Name:      service.Name,
 			Namespace: service.Namespace,
-			Status:    string(service.Spec.Type),
+			Status:    endpointStatus,
 			Age:       age(service.CreationTimestamp.Time),
 		})
 

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"kranger/internal/graph"
+	"github.com/Shauryan/kranger/internal/graph"
 )
 
 func RenderCompact(

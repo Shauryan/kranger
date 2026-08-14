@@ -1,6 +1,6 @@
 package ui
 
-import "kranger/internal/model"
+import "github.com/Shauryan/kranger/internal/model"
 
 type Icon string
 

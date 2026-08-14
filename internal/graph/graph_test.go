@@ -3,7 +3,7 @@ package graph
 import (
 	"testing"
 
-	"kranger/internal/model"
+	"github.com/Shauryan/kranger/internal/model"
 )
 
 func TestBuildGraph(t *testing.T) {

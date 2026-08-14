@@ -1,8 +1,8 @@
 package graph
 
 import (
-	"kranger/internal/model"
-	"kranger/internal/ui"
+	"github.com/Shauryan/kranger/internal/model"
+	"github.com/Shauryan/kranger/internal/ui"
 )
 
 type Node struct {

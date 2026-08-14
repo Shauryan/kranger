@@ -3,7 +3,7 @@ package graph
 import (
 	"sort"
 
-	"kranger/internal/model"
+	"github.com/Shauryan/kranger/internal/model"
 )
 
 type Lane int

@@ -3,8 +3,8 @@ package render
 import (
 	"sort"
 
-	"kranger/internal/graph"
-	"kranger/internal/model"
+	"github.com/Shauryan/kranger/internal/graph"
+	"github.com/Shauryan/kranger/internal/model"
 )
 
 type CompactGroup struct {

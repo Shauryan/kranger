@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"kranger/internal/graph"
+	"github.com/Shauryan/kranger/internal/graph"
 )
 
 func compactNodeLabel(
@@ -51,7 +51,8 @@ func DrawCompactGroup(
 	// an always-empty Status.
 	showsHealth := group.Kind == "Pod" ||
 		group.Kind == "Deployment" ||
-		group.Kind == "ReplicaSet"
+		group.Kind == "ReplicaSet" ||
+		group.Kind == "Service"
 
 	if showsHealth {
 		ready := 0

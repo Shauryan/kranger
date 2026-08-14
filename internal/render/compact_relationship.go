@@ -1,8 +1,8 @@
 package render
 
 import (
-	"kranger/internal/graph"
-	"kranger/internal/model"
+	"github.com/Shauryan/kranger/internal/graph"
+	"github.com/Shauryan/kranger/internal/model"
 )
 
 type CompactRelation struct {
