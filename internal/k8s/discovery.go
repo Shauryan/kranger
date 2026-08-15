@@ -385,6 +385,87 @@ func (d *Discovery) Discover(ctx context.Context) (*model.ClusterState, error) {
 		}
 	}
 
+	// --------------------------------------------------
+	// StatefulSets
+	// --------------------------------------------------
+
+	statefulSets, err := d.Client.Clientset.AppsV1().
+		StatefulSets("").
+		List(ctx, metav1.ListOptions{})
+
+	if err != nil {
+		return nil, fmt.Errorf("list statefulsets: %w", err)
+	}
+
+	for _, sts := range statefulSets.Items {
+		state.StatefulSets = append(state.StatefulSets, model.Resource{
+			ID:        resourceID(model.KindStatefulSet, sts.Namespace, sts.Name),
+			Kind:      model.KindStatefulSet,
+			Name:      sts.Name,
+			Namespace: sts.Namespace,
+			Status: fmt.Sprintf(
+				"%d/%d ready",
+				sts.Status.ReadyReplicas,
+				replicasOrZero(sts.Spec.Replicas),
+			),
+			Age: age(sts.CreationTimestamp.Time),
+		})
+
+		// StatefulSet -> Namespace
+		state.Relationships = append(
+			state.Relationships,
+			model.Relationship{
+				SourceID: resourceID(model.KindNamespace, "", sts.Namespace),
+				TargetID: resourceID(
+					model.KindStatefulSet,
+					sts.Namespace,
+					sts.Name,
+				),
+				Type: model.RelationContains,
+			},
+		)
+
+		// StatefulSet -> Pods (via label selector, since Pods
+		// owned by a StatefulSet don't chain through a
+		// ReplicaSet the way Deployment-owned Pods do).
+		if sts.Spec.Selector != nil {
+			selector := labels.Set(sts.Spec.Selector.MatchLabels).AsSelector()
+
+			stsPods, err := d.Client.Clientset.CoreV1().
+				Pods(sts.Namespace).
+				List(ctx, metav1.ListOptions{
+					LabelSelector: selector.String(),
+				})
+
+			if err != nil {
+				return nil, fmt.Errorf(
+					"find pods for statefulset %s: %w",
+					sts.Name,
+					err,
+				)
+			}
+
+			for _, pod := range stsPods.Items {
+				state.Relationships = append(
+					state.Relationships,
+					model.Relationship{
+						SourceID: resourceID(
+							model.KindStatefulSet,
+							sts.Namespace,
+							sts.Name,
+						),
+						TargetID: resourceID(
+							model.KindPod,
+							pod.Namespace,
+							pod.Name,
+						),
+						Type: model.RelationOwns,
+					},
+				)
+			}
+		}
+	}
+
 	return state, nil
 }
 

@@ -135,9 +135,21 @@ func LayoutCompact(
 			}
 		}
 
-		// Place any unrecognised resource groups compactly.
+		// Place any unrecognised resource groups compactly,
+		// starting on a fresh row below whatever the primary
+		// chain (Deployment/ReplicaSet/Pod/Service) already
+		// occupies, so fallback groups never overlap them.
+		fallbackStartY := contentY
+
+		for _, pos := range layout.Groups {
+			bottom := pos.Y + 3
+			if bottom > fallbackStartY {
+				fallbackStartY = bottom
+			}
+		}
+
 		fallbackX := contentX
-		fallbackY := contentY
+		fallbackY := fallbackStartY
 
 		for _, group := range ns.Groups {
 

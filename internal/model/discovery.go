@@ -7,6 +7,7 @@ type ClusterState struct {
 	Deployments   []Resource
 	ReplicaSets   []Resource
 	Services      []Resource
+	StatefulSets  []Resource
 	Relationships []Relationship
 }
 
@@ -18,6 +19,7 @@ func NewClusterState() *ClusterState {
 		Deployments:   []Resource{},
 		ReplicaSets:   []Resource{},
 		Services:      []Resource{},
+		StatefulSets:  []Resource{},
 		Relationships: []Relationship{},
 	}
 }

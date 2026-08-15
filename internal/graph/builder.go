@@ -34,6 +34,10 @@ func Build(state *model.ClusterState) *Graph {
 		graph.AddNode(FromResource(resource))
 	}
 
+	for _, resource := range state.StatefulSets {
+		graph.AddNode(FromResource(resource))
+	}
+
 	// --------------------------------------------------
 	// Add relationships
 	// --------------------------------------------------
