@@ -4,6 +4,14 @@ Kranger is a terminal UI for watching a Kubernetes cluster's topology in real ti
 
 It's not trying to replace `k9s` or the Kubernetes dashboard. It's a smaller, more focused tool: a compact, at-a-glance view of what's running, whether it's healthy, and how the pieces relate, refreshed on demand.
 
+## Why this exists
+
+Most Kubernetes tools are built for *doing things* — editing resources, execing into pods, tailing logs, deleting what's broken. Kranger isn't that. It's built for *seeing things* — a fast, safe, read-only view of what's running and whether it's healthy, before you go reach for a tool that actually does something.
+
+It never writes to your cluster. It can't. There's no edit, no delete, no exec — only discovery and rendering. That's not a missing feature, it's the point: a visibility layer you can glance at without any risk of changing anything, especially useful against a cluster you don't want to touch carelessly.
+
+If you need to operate on your cluster, you still want `kubectl`, `k9s`, or Lens. Kranger is what you check first.
+
 ## What it actually shows
 
 - Namespaces, grouped visually, each containing the resources inside them
