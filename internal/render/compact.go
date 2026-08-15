@@ -25,6 +25,9 @@ func compactNodeLabel(
 	case "Service":
 		return "SVC"
 
+	case "StatefulSet":
+		return "STS"
+
 	default:
 		return node.Name
 	}
