@@ -1,4 +1,5 @@
 # Kranger
+<img width="907" height="562" alt="Screenshot_20260817_175154" src="https://github.com/user-attachments/assets/311451c7-5b4c-4bcd-8814-9b5863e47823" />
 
 Kranger is a terminal UI for watching a Kubernetes cluster's topology in real time — namespaces, workloads, and how they connect to each other — without leaving your terminal or reaching for a browser.
 
